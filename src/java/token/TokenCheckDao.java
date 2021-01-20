@@ -34,11 +34,13 @@ public class TokenCheckDao {
         String password = "admin";
 
         if (username.equals(model.getUserName()) && password.equals(model.getPassword())) {
+            tokenPrint();
 
             outModel.setTockenNo(token);
             outModel.setOutCode("0");
             outModel.setOutMessage("Token Generate Successfull");
             outModel.setSessionTime(date);
+            outModel.setUserName(username);
 
         } else {
             outModel.setOutCode("1");
@@ -47,6 +49,37 @@ public class TokenCheckDao {
         }
 
         return outModel;
+    }
+
+    public void tokenPrint() {
+        String upperAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lowerAlphabet = upperAlphabet.toLowerCase(Locale.ROOT);
+        String numbers = "1234567890";
+
+        String alphaNumeric = upperAlphabet + lowerAlphabet + numbers;
+
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+
+        int length = 7;
+
+        for (int i = 0; i < length; i++) {
+
+            int index = random.nextInt(alphaNumeric.length());
+            char randomChar = alphaNumeric.charAt(index);
+            sb.append(randomChar);
+        }
+
+        String randomString = sb.toString();
+
+        StringTokenizer st1 = new StringTokenizer(randomString);
+
+        for (int i = 1; st1.hasMoreTokens(); i++) {
+            token = st1.nextToken();
+
+            System.out.println("Token " + i + ": " + token);
+        }
+
     }
 
     public static void main(String[] args) {
@@ -80,16 +113,17 @@ public class TokenCheckDao {
         }
 
         // Value Check
-        TokenCheckDao correctionDao = new TokenCheckDao();
+        TokenCheckDao tokenCheckDao = new TokenCheckDao();
         TokenModel model = new TokenModel();
         model.setUserName("admin");
         model.setPassword("admin");
         System.out.println("model = " + model);
-        correctionDao.getToken(model);
-        System.out.println("Token No = " + correctionDao.getToken(model).getTockenNo());
-        System.out.println("Out Message = " + correctionDao.getToken(model).getOutMessage());
-        System.out.println("Out Code = " + correctionDao.getToken(model).getOutCode());
-        System.out.println("Session Time = " + correctionDao.getToken(model).getSessionTime());
+        TokenModel token1 = tokenCheckDao.getToken(model);
+        System.out.println("Token No = " + token1.getTockenNo());
+        System.out.println("Out Message = " + token1.getOutMessage());
+        System.out.println("Out Code = " + token1.getOutCode());
+        System.out.println("Session Time = " + token1.getSessionTime());
+        System.out.println("Session Time = " + token1.getUserName());
 
     }
 

@@ -24,7 +24,7 @@ import org.json.simple.JSONObject;
  *
  * @author user
  */
-@WebServlet(name = "TokenCheckApi", urlPatterns = {"/TokenCheckApi"})
+@WebServlet(name = "TokenCheckApi", urlPatterns = {"/tokencheckapi"})
 public class TokenCheckApi extends HttpServlet {
 
     /**
@@ -79,10 +79,10 @@ public class TokenCheckApi extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
 
         String requestCode = request.getParameter("requestCode");
         System.out.println("requestCode = " + requestCode);
+
         if ("1".equals(requestCode)) {
 
             String userName = request.getParameter("userName");
@@ -95,25 +95,26 @@ public class TokenCheckApi extends HttpServlet {
                 List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
                 TokenCheckDao dao = new TokenCheckDao();
                 TokenModel reqModel = new TokenModel();
-                JSONArray ja = new JSONArray();
+                reqModel.setUserName(userName);
+                reqModel.setPassword(password);
+                //JSONArray ja = new JSONArray();
 
                 TokenModel cardModel = dao.getToken(reqModel);
 
                 JSONObject jSONObject = new JSONObject();
-                jSONObject.put("tockenNo", cardModel.getTockenNo());
+                jSONObject.put("tokenNo", cardModel.getTockenNo());
                 jSONObject.put("outCode", cardModel.getOutCode());
                 jSONObject.put("outMessage", cardModel.getOutMessage());
                 jSONObject.put("userName", cardModel.getUserName());
-                jSONObject.put("password", cardModel.getPassword());
                 jSONObject.put("sessionTime", cardModel.getSessionTime());
 
-                ja.add(jSONObject);
+               
 
-                System.out.println("Token list Information = " + ja);
+                System.out.println("Token list Information = " + jSONObject);
                 response.addHeader("Access-Control-Allow-Origin", "*");
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
-                response.getWriter().print(ja.toString());
+                response.getWriter().print(jSONObject.toString());
                 response.getWriter().flush();
             } catch (Exception ex) {
                 Logger.getLogger(TokenCheckApi.class.getName()).log(Level.SEVERE, null, ex);
